@@ -12,7 +12,8 @@ config :logger, level: :warn
 # Configure your database
 config :jtv, Jtv.Repo,
   adapter: Ecto.Adapters.Postgres,
-  username: "postgres",
-  password: "postgres",
+  username: "mru2",
+  password: "",
   database: "jtv_test",
+  pool: Ecto.Adapters.SQL.Sandbox,
   size: 1 # Use a single connection for transactional tests

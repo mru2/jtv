@@ -11,23 +11,15 @@ defmodule Jtv do
       supervisor(Jtv.Endpoint, []),
       # Start the Ecto repository
       worker(Jtv.Repo, []),
-      # Event manager
-      worker(GenEvent, [[name: Jtv.EventManager]]),
-      # Counters
-      worker(Jtv.Counter.Views, []),
-      worker(Jtv.Counter.Visits, [])
+      # Start the counters dictionary
+      worker(Jtv.Counters, [])
     ]
 
     # See http://elixir-lang.org/docs/stable/elixir/Supervisor.html
     # for other strategies and supported options
     opts = [strategy: :one_for_one, name: Jtv.Supervisor]
-    out = Supervisor.start_link(children, opts)
 
-    # Add event handlers
-    GenEvent.add_handler(Jtv.EventManager, Jtv.Handler.Counter, [])
-    GenEvent.add_handler(Jtv.EventManager, Jtv.Handler.ExpirationCounter, [])
-
-    out
+    Supervisor.start_link(children, opts)
   end
 
   # Tell Phoenix to update the endpoint configuration

@@ -3,8 +3,10 @@ defmodule Jtv.HitController do
 
   plug :action
 
-  def create(conn, %{"hit" => params}) do
-    GenEvent.notify Jtv.EventManager, {:hit, params}
+  def create(conn, %{"@fields" => ( params = %{"user" => user_id} )}) do
+    # TODO : Handle multiple counters
+    Jtv.Counters.handle({:all_visits, user_id})
+
     json conn, %{status: :ok}
   end
 
