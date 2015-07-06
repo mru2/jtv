@@ -4,8 +4,11 @@ defmodule Jtv.HitController do
   plug :action
 
   def create(conn, %{"@fields" => ( params = %{"user" => user_id} )}) do
+
     # TODO : Handle multiple counters
-    Jtv.Counters.handle({:all_visits, user_id})
+    {:all_visits, []}
+    |> Jtv.Counters.get
+    |> Jtv.Counter.add user_id, user_id
 
     json conn, %{status: :ok}
   end
