@@ -58,6 +58,7 @@ defmodule Jtv.Counter do
   end
 
   # TO REIMPLEMENT : timeout implementation
+  # Make the counter implementation tell if the expiration should be reset
   # defp reset_timeout(state = %{timeouts: timeouts, timeout: timeout}, user_id) do
   #   existing_timeout = timeouts[user_id]
   #   if existing_timeout do
