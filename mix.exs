@@ -35,6 +35,9 @@ defmodule Jtv.Mixfile do
      {:phoenix_html, "~> 1.0"},
      {:phoenix_live_reload, "~> 0.4", only: :dev},
      {:cowboy, "~> 1.0"},
-     {:exactor, "~> 2.1.0"}]
+     {:exactor, "~> 2.1.0"},
+
+     # Tests
+     {:poison, "~> 1.4.0"}]
   end
 end
