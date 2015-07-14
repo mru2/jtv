@@ -12,7 +12,9 @@ defmodule Jtv do
       # Start the Ecto repository
       worker(Jtv.Repo, []),
       # Start the counters dictionary
-      worker(Jtv.Counters, [])
+      worker(Jtv.Counters, []),
+      # Start the hits pubsub
+      worker(GenEvent, [[name: Jtv.EventManager]])
     ]
 
     # See http://elixir-lang.org/docs/stable/elixir/Supervisor.html

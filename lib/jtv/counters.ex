@@ -20,8 +20,13 @@ defmodule Jtv.Counters do
 
   # Lauch a counter by key, return its pid
   def launch(counter) do
-    {mod, opts} = counter_type(counter)
-    {:ok, pid} = Jtv.Counter.start(mod, opts)
+    {counter_type, filter, expiration} = counter_opts(counter)
+
+    # Launch counter process
+    {:ok, pid} = Jtv.Counter.start(counter_type, [expiration: expiration])
+
+    # Make it monitor the hits
+    GenEvent.add_handler Jtv.EventManager, Jtv.Filter, [counter: pid, filter: filter]
 
     # TODO : supervise counter properly
     Agent.update(__MODULE__, &(HashDict.put(&1, counter, pid)))
@@ -29,10 +34,15 @@ defmodule Jtv.Counters do
     pid
   end
 
+  # Todo : handle termination of counters
+
   # Counter types
-  # TODO : also handle lambda for pattern matching signals
-  def counter_type({:all_visits, []}) do
-    { Jtv.Counter.UniqueKeys, [expire_after: 5 * 60 * 1000] }
+  # Returns a map with the following info
+  # - counter type
+  # - counter args
+  # - filter type
+  def counter_opts({:all_visits, []}) do
+    { Jtv.Counter.UniqueKeys, &Jtv.Filter.unique_users/1, 5 * 60 * 1000 }
   end
 
 end

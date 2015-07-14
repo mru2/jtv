@@ -7,12 +7,12 @@ defmodule Jtv.StatsChannel do
     counter_key = { String.to_atom(name), [] }
 
     # Persist the counter key in order to kill the watcher on socket termination
-    socket = socket |> assign :counter_key, counter_key
+    socket = socket |> assign(:counter_key, counter_key)
 
     # Watch counter updates
-    {:value, val} = counter_key
+    val = counter_key
     |> Jtv.Counters.get
-    |> Jtv.Counter.add_watcher
+    |> Jtv.Counter.add_watcher(self)
 
     # Create handle if needed
     {:ok, %{val: val}, socket}
@@ -25,12 +25,14 @@ defmodule Jtv.StatsChannel do
     {:noreply, socket}
   end
 
+  def handle_info(_, socket), do: {:noreply, socket}
+
 
   def terminate(reason, socket) do
     # Drop watcher
-    socket.assign(:counter_key)
+    socket.assigns[:counter_key]
     |> Jtv.Counters.get
-    |> Jtv.Counter.remove_watcher
+    |> Jtv.Counter.remove_watcher(self)
 
     {:shutdown}
   end

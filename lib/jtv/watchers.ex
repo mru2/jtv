@@ -11,7 +11,7 @@ defmodule Jtv.Watchers do
   def broadcast(watchers, value) do
     watchers
     |> HashSet.to_list
-    |> Enum.each fn(pid) -> send(pid, value) end
+    |> Enum.each fn(pid) -> send(pid, {:new_value, value}) end
   end
 
 end

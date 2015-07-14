@@ -49,7 +49,7 @@ defmodule Jtv.Counter do
   end
 
   # Removes a listener
-  defcast remove_listener(pid), state: {class, values, watchers} do
+  defcast remove_watcher(pid), state: {class, values, watchers} do
     # Removes the watcher
     watchers = watchers |> Watchers.remove pid
 
