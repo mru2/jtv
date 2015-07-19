@@ -13,7 +13,7 @@ use Mix.Config
 # which you typically run after static files are built.
 config :jtv, Jtv.Endpoint,
   http: [port: {:system, "PORT"}],
-  url: [host: "example.com"],
+  url: [host: "morning-lowlands-1542.herokuapp.com"],
   cache_static_manifest: "priv/static/manifest.json"
 
 # ## SSL Support
