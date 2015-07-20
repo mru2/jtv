@@ -2,7 +2,7 @@ defmodule Jtv.Counter.VisitsPattern do
   require IEx
 
   def new do
-    %{sessions: HashDict.new, patterns: HashDict.new}
+    %{sessions: Map.new, patterns: Map.new}
   end
 
   def add(counter = %{sessions: sessions, patterns: patterns}, session_id, page) do
@@ -28,7 +28,7 @@ defmodule Jtv.Counter.VisitsPattern do
 
   def remove(%{sessions: sessions, patterns: patterns}, session_id) do
     # Remove the session history
-    {history, sessions} = sessions |> HashDict.pop(session_id, [])
+    {history, sessions} = sessions |> Map.pop(session_id, [])
 
     # Extract triplets from history, and decount them from the patterns
     triplets = history |> extract_triplets
@@ -41,7 +41,7 @@ defmodule Jtv.Counter.VisitsPattern do
 
   defp add_page_view(sessions, session_id, page) do
     # Get existing history
-    history = sessions |> HashDict.get(session_id, [])
+    history = sessions |> Map.get(session_id, [])
 
     # Generate the triplet of the 3 last page views
     # TODO? Handle larger n-plets (4, 5, ...) ?
@@ -51,7 +51,7 @@ defmodule Jtv.Counter.VisitsPattern do
     end
 
     # Update the session history
-    sessions = sessions |> HashDict.put(session_id, [page | history])
+    sessions = sessions |> Map.put(session_id, [page | history])
 
     {sessions, triplet}
   end
@@ -59,7 +59,7 @@ defmodule Jtv.Counter.VisitsPattern do
   defp add_triplet(triplets, triplet) do
     # Increment the triplets counter, starting at 0 if none
     triplets
-    |> HashDict.update(triplet, 1, fn counter -> counter + 1 end)
+    |> Map.update(triplet, 1, fn counter -> counter + 1 end)
   end
 
   # Extract triplets from an history
@@ -71,10 +71,10 @@ defmodule Jtv.Counter.VisitsPattern do
   defp remove_triplets(patterns, []), do: patterns
   defp remove_triplets(patterns, [triplet | rest]) do
     # Unping the triplet
-    patterns = case ( patterns |> HashDict.get(triplet) ) do
+    patterns = case ( patterns |> Map.get(triplet) ) do
       nil    -> patterns
-      1      -> HashDict.delete(patterns, triplet)
-      count  -> HashDict.put(patterns, triplet, (count - 1))
+      1      -> Map.delete(patterns, triplet)
+      count  -> Map.put(patterns, triplet, (count - 1))
     end
 
     # Recursively drop the others

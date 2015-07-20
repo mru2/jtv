@@ -2,14 +2,14 @@
 # Allow dynamic creation and subscribing
 defmodule Jtv.Counters do
 
-  # Counter dictionary : HashDict of key => pid
+  # Counter dictionary : Map of key => pid
   def start_link(opts \\ []) do
-    Agent.start_link(fn -> HashDict.new end, name: __MODULE__)
+    Agent.start_link(fn -> Map.new end, name: __MODULE__)
   end
 
   # Get a counter pid by key
   def get(counter) do
-    pid = Agent.get(__MODULE__, fn dict -> HashDict.get(dict, counter) end)
+    pid = Agent.get(__MODULE__, fn dict -> Map.get(dict, counter) end)
 
     # Dynamically launch the counter process if none yet
     cond do
@@ -29,7 +29,7 @@ defmodule Jtv.Counters do
     GenEvent.add_handler Jtv.EventManager, Jtv.Filter, [counter: pid, filter: filter]
 
     # TODO : supervise counter properly
-    Agent.update(__MODULE__, &(HashDict.put(&1, counter, pid)))
+    Agent.update(__MODULE__, &(Map.put(&1, counter, pid)))
 
     pid
   end

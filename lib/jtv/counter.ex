@@ -69,7 +69,7 @@ defmodule Jtv.Counter do
   #     :timer.sleep(timeout)
   #     GenServer.cast(me, {:unping, user_id})
   #   end
-  #   %{state | timeouts: HashDict.put(timeouts, user_id, new_timeout)}
+  #   %{state | timeouts: Map.put(timeouts, user_id, new_timeout)}
   # end
 
 end

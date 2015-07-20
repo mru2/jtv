@@ -1,17 +1,17 @@
 defmodule Jtv.Counter.Categories do
 
-  # Internally, hashdict of key => category
+  # Internally, Map of key => category
   # May ne optimized with a better data structure
   def new do
-    HashDict.new
+    Map.new
   end
 
   def add(counter, key, category) do
-    counter |> HashDict.put(key, category)
+    counter |> Map.put(key, category)
   end
 
   def remove(counter, key) do
-    counter |> HashDict.delete(key)
+    counter |> Map.delete(key)
   end
 
   def count(counter) do
