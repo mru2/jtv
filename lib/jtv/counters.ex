@@ -2,14 +2,25 @@
 # Allow dynamic creation and subscribing
 defmodule Jtv.Counters do
 
-  # Counter dictionary : Map of key => pid
+  use Supervisor
+
   def start_link(opts \\ []) do
-    Agent.start_link(fn -> Map.new end, name: __MODULE__)
+    Supervisor.start_link(__MODULE__, [], name: __MODULE__)
+  end
+
+  def init(_opts) do
+    children = [
+      # Counter dictionary : Map of key => pid
+      # Couldn't find how to do it via the supervisor ...
+      worker(Agent, [fn -> Map.new end, [name: Jtv.Counters.List]], restart: :permanent)
+    ]
+
+    supervise(children, strategy: :one_for_one)
   end
 
   # Get a counter pid by key
   def get(counter) do
-    pid = Agent.get(__MODULE__, fn dict -> Map.get(dict, counter) end)
+    pid = Agent.get(Jtv.Counters.List, fn dict -> Map.get(dict, counter) end)
 
     # Dynamically launch the counter process if none yet
     cond do
@@ -23,13 +34,17 @@ defmodule Jtv.Counters do
     {counter_type, filter, expiration} = counter_opts(counter)
 
     # Launch counter process
-    {:ok, pid} = Jtv.Counter.start(counter_type, [expiration: expiration])
+    {:ok, pid} = Supervisor.start_child(__MODULE__, worker(
+      Jtv.Counter,
+      [counter_type, [expiration: expiration]],
+      restart: :transient
+    ))
 
     # Make it monitor the hits
     GenEvent.add_handler Jtv.EventManager, Jtv.Filter, [counter: pid, filter: filter]
 
-    # TODO : supervise counter properly
-    Agent.update(__MODULE__, &(Map.put(&1, counter, pid)))
+    # Save the pid
+    Agent.update(Jtv.Counters.List, &(Map.put(&1, counter, pid)))
 
     pid
   end

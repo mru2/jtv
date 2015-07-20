@@ -6,9 +6,7 @@ defmodule Jtv.Counter do
   use ExActor.GenServer
   alias Jtv.Watchers
 
-  # TODO : make start_link when supervisor implemented in counters
-  # TODO : re-implement expiration
-  defstart start(class, opts) do
+  defstart start_link(class, opts) do
     initial_state {class, class.new, Watchers.new}
   end
 
