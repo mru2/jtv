@@ -3,11 +3,6 @@ defmodule Jtv.Counter.ParserTest do
 
   alias Jtv.Timeout
 
-  setup do
-    Timeout.start_link
-    :ok
-  end
-
   test "spawn" do
     me = self
     Timeout.spawn(:foo, fn -> send(me, :msg) end, 100)

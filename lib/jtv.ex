@@ -14,7 +14,9 @@ defmodule Jtv do
       # Start the counters dictionary
       worker(Jtv.Counters, []),
       # Start the hits pubsub
-      worker(GenEvent, [[name: Jtv.EventManager]])
+      worker(GenEvent, [[name: Jtv.EventManager]]),
+      # Start the timeouts manager
+      worker(Jtv.Timeout, [])
     ]
 
     # See http://elixir-lang.org/docs/stable/elixir/Supervisor.html
