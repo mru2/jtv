@@ -1,8 +1,6 @@
 defmodule Jtv.HitController do
   use Jtv.Web, :controller
 
-  plug :action
-
   def create(conn, params) do
     # Parse the payload
     payload = params |> Jtv.Parser.parse
